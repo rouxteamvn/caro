@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 /*----- constants -----*/
 const winningCombos = [
     [0, 1, 2], // row
@@ -41,22 +41,25 @@ function handleTurnPlayer(event) {
         return square === event.target;
     });
 
-    if (board[idx] == "" && !win) {
-        board[idx] = turn;
-        turn = (turn === "X") ? "O" : "X";
+    if (!win) {
+        if (!board[idx]) {
+            board[idx] = turn;
+            turn = (turn === "X") ? "O" : "X";
+        }
     }
 
-    console.log(board); // check board works
-    if (!win) {
-        win = getWinner();
-    }
+    win = getWinner();
     render();
 }
 
 function checkBlankForMachine() {
     let randIdx = Math.floor(Math.random() * 9);
     if (numTurn < 5) {
-        (board[randIdx] !== "") ? checkBlankForMachine(): board[randIdx] = turn;
+        if (board[randIdx]) {
+            checkBlankForMachine();
+        } else {
+            board[randIdx] = turn;
+        }
     }
 }
 
@@ -66,21 +69,24 @@ function handleTurnMachine(event) {
         return square === event.target;
     });
 
-    if (board[idx] == "" && win === null) {
-        board[idx] = turn;
-        turn = 'O';
-    }
-    numTurn++;
+    if (!win) {
+        if (!board[idx]) {
+            board[idx] = turn;
+            numTurn++;
 
-    // random machine move
-    if (turn === "O") {
-        checkBlankForMachine();
-        turn = "X";
+            // check if X win then stop random move of machine
+            win = getWinner();
+            turn = win ? "X" : "O";
+        }
+
+        // random machine move
+        if (turn === "O") {
+            checkBlankForMachine();
+            win = getWinner();
+            turn = "X";
+        }
     }
 
-    if (win === null) {
-        win = getWinner();
-    }
     render();
 }
 
@@ -127,7 +133,7 @@ function getWinner() {
             highlight.push(combo[0], combo[1], combo[2]);
         }
     });
-    return winner ? winner : board.includes('') ? null : 'T';
+    return winner ? winner : board.includes("") ? null : "T";
 
 }
 
