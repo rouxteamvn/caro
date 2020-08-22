@@ -109,10 +109,13 @@ function render() {
 function getWinner() {
     let winner = null;
     winningCombos.forEach(combo => {
-        if (board[combo[0]] === "X" &&
-            board[combo[0]] === board[combo[1]] &&
+        if (board[combo[0]] === board[combo[1]] &&
             board[combo[0]] === board[combo[2]]) {
-            winner = name;
+            if (board[combo[0]] === "X") {
+                winner = name;
+            } else {
+                winner = "machine";
+            }
             highlight.push(combo[0], combo[1], combo[2]);
         }
     });
