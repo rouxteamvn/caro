@@ -17,7 +17,7 @@ let turn;
 let numTurn;
 let win; // go pro
 let highlight = [];
-let name = prompt("PLEASE, INPUT YOUR FUCKING NAME: ", "FUCKING RIGHT THERE, DAMN YOU!");
+let name;
 
 /*----- cached element references -----*/
 const squares = Array.from(document.querySelectorAll('#board div'));
@@ -28,19 +28,26 @@ document.getElementById('board').addEventListener('click', handleTurnMachine);
 document.getElementById('reset-button').addEventListener('click', init);
 
 /*----- functions -----*/
+function getName() {
+    name = prompt("PLEASE, INPUT YOUR FUCKING NAME: ", "FUCKING RIGHT THERE, DAMN YOU!");
+
+    if (!name) getName();
+}
+getName();
+
 function handleTurnPlayer(event) {
     // find the index of square that user clicks.
     let idx = squares.findIndex(square => {
         return square === event.target;
     });
 
-    if (board[idx] == "" && win === null) {
+    if (board[idx] == "" && !win) {
         board[idx] = turn;
         turn = (turn === "X") ? "O" : "X";
     }
 
     console.log(board); // check board works
-    if (win === null) {
+    if (!win) {
         win = getWinner();
     }
     render();
@@ -109,12 +116,13 @@ function render() {
 function getWinner() {
     let winner = null;
     winningCombos.forEach(combo => {
-        if (board[combo[0]] === board[combo[1]] &&
+        if (board[combo[0]] &&
+            board[combo[0]] === board[combo[1]] &&
             board[combo[0]] === board[combo[2]]) {
             if (board[combo[0]] === "X") {
                 winner = name;
             } else {
-                winner = "machine";
+                winner = "Machine";
             }
             highlight.push(combo[0], combo[1], combo[2]);
         }
